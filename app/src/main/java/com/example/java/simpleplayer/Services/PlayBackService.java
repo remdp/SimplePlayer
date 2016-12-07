@@ -107,4 +107,19 @@ public class PlayBackService extends Service implements MediaPlayer.OnPreparedLi
         }
         return uri;
     }
+
+    public void playSongId(long songId) {
+        // Song song = SongsRepository.getSongForID(this, songId);
+        Uri contentUri = ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                songId);
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(this, contentUri);
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

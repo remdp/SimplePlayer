@@ -38,12 +38,12 @@ public class SongsPresenter {
                 mView.onAllSongsLoaded(songs);
             }
 
-            List<Song> songs = SongLoader.getAllSongs(mView.getContext());
+            List<Song> songs = SongsRepository.getAllSongs(mView.getContext());
 
             @Override
             protected List<Song> doInBackground(Void... voids) {
                 try{
-                    return SongLoader.getAllSongs(mView.getContext());
+                    return SongsRepository.getAllSongs(mView.getContext());
                 }catch (Exception e){
                     e.printStackTrace();
                 }

@@ -8,7 +8,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.java.simpleplayer.R;
@@ -26,6 +30,9 @@ public class MainActivity extends AppCompatActivity implements SongsView {
 
     private PlayBackService mService;
     private boolean mBound = false;
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+    private static final int SPAN_COUNT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements SongsView {
         mPresenter.onAttachToView(this);
         mPresenter.loadAllSongs();
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
       //  final Intent playbackIntent = PlayBackService.newInstance(this);
         //playbackIntent.setAction(PlayBackService.ACTION_PLAY);
         //startService(playbackIntent);
@@ -85,7 +94,27 @@ public class MainActivity extends AppCompatActivity implements SongsView {
 
     @Override
     public void onAllSongsLoaded(List<Song> songList) {
-       // Log.d(TAG, "" + songList.size());
-        Toast.makeText(this, ""+songList.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, ""+songList.size(), Toast.LENGTH_SHORT).show();
+
+        final RecyclerView.LayoutManager manager = new GridLayoutManager(
+                this,
+                SPAN_COUNT);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setHasFixedSize(true);
+        final SongsAdapter adapter = new SongsAdapter();
+        adapter.setDataSource(songList);
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClicklistener(item -> {
+            final SongsAdapter.SongViewHolder holder =
+                    (SongsAdapter.SongViewHolder) mRecyclerView.findContainingViewHolder(item);
+            if(holder == null) return;
+            final Song song = holder.getSong();
+            final long songId = song.id;
+            if(mBound) {
+                mService.playSongId(songId);
+            }
+        });
     }
 }
