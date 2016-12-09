@@ -10,53 +10,43 @@ import com.example.java.simpleplayer.views.SongsView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by java on 05.12.2016.
- */
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class SongsPresenter {
 
     private SongsView mView = null;
 
+    private Subscription subscription = null;
+
     public void onAttachToView(@NonNull SongsView songsView){
         mView = songsView;
     }
 
-    public void loadAllSongs(){
-
-        new AsyncTask<Void, Void, List<Song>>(){
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(List<Song> songs) {
-                super.onPostExecute(songs);
-                if (mView == null) return;
-                mView.onAllSongsLoaded(songs);
-            }
-
-            List<Song> songs = SongsRepository.getAllSongs(mView.getContext());
-
-            @Override
-            protected List<Song> doInBackground(Void... voids) {
-                try{
-                    return SongsRepository.getAllSongs(mView.getContext());
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                return new ArrayList<Song>();
-            }
-        }.execute();
-
-
-    }
-
+        public void loadAllSongs(){
+            subscription = Observable.just(SongsRepository.getAllSongs(mView.getContext()))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<ArrayList<Song>>() {
+                                   @Override
+                                   public void call(ArrayList<Song> songs) {
+                                       mView.onAllSongsLoaded(songs);
+                                   }
+                               },
+                            new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    throwable.printStackTrace();
+                                }
+                            });
+        }
 
     public void onDetach(){
-        mView = null;
+        if(subscription != null)
+            subscription.unsubscribe();
     }
 
 }

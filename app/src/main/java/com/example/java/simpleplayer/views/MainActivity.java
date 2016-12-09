@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -22,9 +23,7 @@ import com.example.java.simpleplayer.services.PlayBackService;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SongsView {
-
-    public static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements SongsView, View.OnClickListener {
 
     private SongsPresenter mPresenter = new SongsPresenter();
 
@@ -33,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements SongsView {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private static final int SPAN_COUNT = 2;
+
+    private Button buttonStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements SongsView {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        buttonStop = (Button) findViewById(R.id.stop_button);
+        buttonStop.setOnClickListener(this);
       //  final Intent playbackIntent = PlayBackService.newInstance(this);
         //playbackIntent.setAction(PlayBackService.ACTION_PLAY);
         //startService(playbackIntent);
@@ -106,15 +110,24 @@ public class MainActivity extends AppCompatActivity implements SongsView {
         mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setAdapter(adapter);
 
-        adapter.setOnItemClicklistener(item -> {
-            final SongsAdapter.SongViewHolder holder =
-                    (SongsAdapter.SongViewHolder) mRecyclerView.findContainingViewHolder(item);
-            if(holder == null) return;
-            final Song song = holder.getSong();
-            final long songId = song.id;
-            if(mBound) {
-                mService.playSongId(songId);
+        adapter.setOnItemClicklistener(new View.OnClickListener() {
+            @Override
+            public void onClick(View item) {
+                final SongsAdapter.SongViewHolder holder =
+                        (SongsAdapter.SongViewHolder) mRecyclerView.findContainingViewHolder(item);
+                if (holder == null) return;
+                final Song song = holder.getSong();
+                final long songId = song.id;
+                if (mBound) {
+                    mService.playSongId(songId);
+                }
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        //Toast.makeText(this, "stop", Toast.LENGTH_SHORT).show();
+        mService.stopPlay();
     }
 }
