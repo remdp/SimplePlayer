@@ -12,6 +12,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -35,12 +37,24 @@ public class MainActivity extends AppCompatActivity implements SongsView, View.O
 
     private Button buttonStop;
 
+    public static Intent newIntent (Context context){
+        return new Intent(context, MainActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+                new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Animation translateAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.activity_in);
+                mProgressBar.startAnimation(translateAnimation);
+            }
+        },2000);
         mPresenter.onAttachToView(this);
-        mPresenter.loadAllSongs();
+        //mPresenter.loadAllSongs();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
