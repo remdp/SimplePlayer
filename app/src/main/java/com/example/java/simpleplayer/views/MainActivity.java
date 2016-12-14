@@ -53,17 +53,19 @@ public class MainActivity extends AppCompatActivity implements SongsView, View.O
                 mProgressBar.startAnimation(translateAnimation);
             }
         },2000);
-        mPresenter.onAttachToView(this);
-        //mPresenter.loadAllSongs();
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        mPresenter.onAttachToView(this);
+        mPresenter.loadAllSongs();
+
         buttonStop = (Button) findViewById(R.id.stop_button);
         buttonStop.setOnClickListener(this);
-      //  final Intent playbackIntent = PlayBackService.newInstance(this);
-        //playbackIntent.setAction(PlayBackService.ACTION_PLAY);
-        //startService(playbackIntent);
+        Intent playbackIntent = PlayBackService.newInstance(this);
+        playbackIntent.setAction(PlayBackService.ACTION_PLAY);
+        startService(playbackIntent);
 
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
