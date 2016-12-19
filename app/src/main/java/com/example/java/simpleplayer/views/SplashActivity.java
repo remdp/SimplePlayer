@@ -22,7 +22,7 @@ public class SplashActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(MainActivity.newIntent(SplashActivity.this));
+                startActivity(NavigationDriver.newIntent(SplashActivity.this));
                 overridePendingTransition(R.anim.activity_in, android.R.anim.fade_out);
             }
         }, 1000);
