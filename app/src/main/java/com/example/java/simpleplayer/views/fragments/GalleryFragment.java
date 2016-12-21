@@ -1,14 +1,18 @@
 package com.example.java.simpleplayer.views.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.java.simpleplayer.R;
+import com.example.java.simpleplayer.views.MenuInteractionListener;
 
 /**
  * Created by maltsev on 21.12.2016.
@@ -20,6 +24,15 @@ public class GalleryFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private MenuInteractionListener menuInteractionListener = null;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof MenuInteractionListener){
+            menuInteractionListener = (MenuInteractionListener) activity;
+        }
+    }
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,6 +83,23 @@ public class GalleryFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.btn).setOnClickListener(btnView ->{
+            final int value = getArguments().getInt("SOME VALUE");
+            menuInteractionListener.onMainFragmentEventListener(value);
+        });
+        //;
+    }
+
+    public void showText(CharSequence text){
+        final View view = getView();
+        if(view == null) return;
+        final TextView textView = (TextView) view.findViewById(R.id.tv);
+        textView.setText(text);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.java.simpleplayer.views;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,10 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.java.simpleplayer.R;
+import com.example.java.simpleplayer.views.fragments.GalleryFragment;
 import com.example.java.simpleplayer.views.fragments.ImportFragment;
 
 public class MenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MenuInteractionListener {
 
     public static Intent newIntent (Context context){
         return new Intent(context, MenuActivity.class);
@@ -42,6 +44,11 @@ public class MenuActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
+//        new  Handler().postDelayed( ()->
+//        addFragment(GalleryFragment.newInstance(3)); ,1000);
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -70,7 +77,7 @@ public class MenuActivity extends AppCompatActivity
                 .beginTransaction()
                 .add(R.id.content_menu, fragment)
                 .addToBackStack(null)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     public void replaceFragment(Fragment fragment) {
@@ -82,12 +89,13 @@ public class MenuActivity extends AppCompatActivity
                 .commit();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_driver, menu);
         return true;
+
+
     }
 
     @Override
@@ -116,7 +124,10 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             //replaceFragment(GalleryFragment.newInstance("fddfdf", "fddfdfdf"));
         } else if (id == R.id.nav_slideshow) {
-
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_menu);
+            if(fragment instanceof GalleryFragment){
+                ((GalleryFragment) fragment).showText("CLICK");
+            }
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
@@ -128,5 +139,10 @@ public class MenuActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onMainFragmentEventListener(int value) {
+
     }
 }
