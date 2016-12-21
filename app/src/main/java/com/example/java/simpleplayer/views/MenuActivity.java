@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.java.simpleplayer.R;
+import com.example.java.simpleplayer.views.fragments.ImportFragment;
 
-public class NavigationDriver extends AppCompatActivity
+public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static Intent newIntent (Context context){
-        return new Intent(context, NavigationDriver.class);
+        return new Intent(context, MenuActivity.class);
     }
 
     @Override
@@ -60,6 +63,26 @@ public class NavigationDriver extends AppCompatActivity
         }
     }
 
+
+    private void addFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        manager
+                .beginTransaction()
+                .add(R.id.content_menu, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        manager
+                .beginTransaction()
+                .replace(R.id.content_menu, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -89,9 +112,9 @@ public class NavigationDriver extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            replaceFragment(ImportFragment.newInstance("fddffd", "dfdfdfdf"));
         } else if (id == R.id.nav_gallery) {
-
+            //replaceFragment(GalleryFragment.newInstance("fddfdf", "fddfdfdf"));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

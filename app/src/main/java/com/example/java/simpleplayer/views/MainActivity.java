@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements SongsView, View.O
     private boolean mBound = false;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+
+    public static final String TAG = MainActivity.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
 
     private Button buttonStop;
