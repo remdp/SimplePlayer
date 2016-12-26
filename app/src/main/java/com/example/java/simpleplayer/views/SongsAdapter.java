@@ -27,7 +27,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongViewHold
     private List<Song> mDataSource = null;
 
     private View.OnClickListener mOnItemClickListener;
-    public void setOnItemClicklistener(View.OnClickListener onClickListener){
+
+    public void setOnItemClickListener(View.OnClickListener onClickListener) {
         mOnItemClickListener = onClickListener;
     }
 
@@ -62,8 +63,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongViewHold
         private ImageView mCoverImageView;
         private TextView mArtistTextView;
         private TextView mTitleTextView;
-
-
 
         public SongViewHolder(View itemView) {
             super(itemView);

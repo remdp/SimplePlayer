@@ -1,14 +1,11 @@
 package com.example.java.simpleplayer.presenters;
 
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.example.java.simpleplayer.models.Song;
-import com.example.java.simpleplayer.views.MainActivity;
 import com.example.java.simpleplayer.views.SongsView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
