@@ -3,7 +3,6 @@ package com.example.java.simpleplayer.views;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -32,9 +31,11 @@ public class MenuActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation_driver);
+        setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        addFragment(ImportFragment.newInstance("ffddf", "fddfdfdf"));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +78,7 @@ public class MenuActivity extends AppCompatActivity
                 .beginTransaction()
                 .add(R.id.content_menu, fragment)
                 .addToBackStack(null)
-                .commitAllowingStateLoss();
+                .commit();
     }
 
     public void replaceFragment(Fragment fragment) {
@@ -92,7 +93,7 @@ public class MenuActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_driver, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
 
 
@@ -122,7 +123,7 @@ public class MenuActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             replaceFragment(ImportFragment.newInstance("fddffd", "dfdfdfdf"));
         } else if (id == R.id.nav_gallery) {
-            //replaceFragment(GalleryFragment.newInstance("fddfdf", "fddfdfdf"));
+            replaceFragment(GalleryFragment.newInstance("fddfdf", "fddfdfdf"));
         } else if (id == R.id.nav_slideshow) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_menu);
             if(fragment instanceof GalleryFragment){

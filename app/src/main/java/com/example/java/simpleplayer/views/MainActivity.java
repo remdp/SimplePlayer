@@ -1,5 +1,6 @@
 package com.example.java.simpleplayer.views;
 
+import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,41 +28,75 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SongsView, View.OnClickListener {
 
-    private SongsPresenter mPresenter = new SongsPresenter();
-
-    private PlayBackService mService;
-    private boolean mBound = false;
-    private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
+    public static Intent newIntent (Context context){
+        return new Intent(context, MainActivity.class);
+    }
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
 
-    private Button buttonStop;
+    private SongsPresenter mPresenter = new SongsPresenter();
 
-    public static Intent newIntent (Context context){
-        return new Intent(context, MainActivity.class);
-    }
+    private PlayBackService mService;
+    private boolean mBound = false;
+
+
+    private ServiceConnection mConnection  = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            PlayBackService.PlayBackBinder binder =
+                    (PlayBackService.PlayBackBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBound = false;
+        }
+    };
+
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+
+    private Button buttonStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-                new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Animation translateAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.activity_in);
-                mProgressBar.startAnimation(translateAnimation);
-            }
-        },2000);
+//                new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Animation translateAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.activity_in);
+//                mProgressBar.startAnimation(translateAnimation);
+//            }
+//        },2000);
 
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        mProgressBar.setAlpha(0);
+        mProgressBar.animate().alpha(1).setDuration(1000).start();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animator = ObjectAnimator.ofFloat(
+                        mProgressBar,
+                        View.TRANSLATION_Y,
+                        -2000,
+                        0);
+
+                animator.setDuration(4000);
+                animator.start();
+            }
+        }, 3000);
+
         mPresenter.onAttachToView(this);
-        mPresenter.loadAllSongs();
+        //mPresenter.loadAllSongs();
 
         buttonStop = (Button) findViewById(R.id.stop_button);
         buttonStop.setOnClickListener(this);
@@ -78,20 +113,7 @@ public class MainActivity extends AppCompatActivity implements SongsView, View.O
 
     };
 
-    private ServiceConnection mConnection  = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            PlayBackService.PlayBackBinder binder =
-                    (PlayBackService.PlayBackBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mBound = false;
-        }
-    };
 
     @Override
     protected void onStart() {
