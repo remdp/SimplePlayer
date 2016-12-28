@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,13 +20,25 @@ import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.models.Song;
 import com.example.java.simpleplayer.presenters.SongsPresenter;
 import com.example.java.simpleplayer.services.PlayBackService;
+import com.example.java.simpleplayer.views.base.BaseActivity;
 
 import java.util.List;
 
-public class MusicActivity extends AppCompatActivity  {
+public class MusicActivity extends BaseActivity {
+
+    public interface PlayBackInteraction{
+        void play();
+        void pause();
+        void play(long songId);
+    }
 
     private PlayBackService mService;
     private boolean mBound = false;
+
+    @Nullable
+    public PlayBackInteraction getPlayBackService(){
+        return mService;
+    }
 
     private ServiceConnection mConnection  = new ServiceConnection() {
         @Override

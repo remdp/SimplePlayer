@@ -6,13 +6,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.views.MenuInteractionListener;
+import com.example.java.simpleplayer.views.MusicActivity;
 
 /**
  * Created by maltsev on 21.12.2016.
@@ -22,7 +25,13 @@ public class MainFragment extends Fragment {
 
     private MenuInteractionListener mListener = null;
 
+    private MusicActivity.PlayBackInteraction mPlayBackInteraction;
+
     public static final String SOME_VALUE = "SOME_VALUE";
+
+    private ViewPager viewPager;
+
+    private ImageView mPlayPauseButton;
 
     public static MainFragment newInstance(int value) {
         Bundle args = new Bundle();
@@ -38,6 +47,10 @@ public class MainFragment extends Fragment {
         if(activity instanceof MenuInteractionListener) {
             mListener = (MenuInteractionListener) activity;
         }
+
+        if(activity instanceof MusicActivity){
+            mPlayBackInteraction = ((MusicActivity)activity).getPlayBackService();
+        }
     }
 
     @Override
@@ -51,10 +64,15 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn).setOnClickListener(btnView -> {
-            final int value = getArguments().getInt(SOME_VALUE);
-            mListener.onMainFragmentEventListener(value);
-        });
+       viewPager = (ViewPager) view.findViewById(R.id.pager);
+        if(viewPager!=null){
+            //setupView
+        }
+
+        mPlayPauseButton.setOnClickListener(iv->){
+
+        };
+
     }
 
     public void showText(CharSequence text) {
