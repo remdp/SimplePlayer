@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.models.Song;
 import com.example.java.simpleplayer.presenters.SongsPresenter;
 import com.example.java.simpleplayer.views.MusicActivity;
+import com.example.java.simpleplayer.views.MusicActivity.PlayBackInteraction;
 import com.example.java.simpleplayer.views.SongsAdapter;
 import com.example.java.simpleplayer.views.SongsView;
 
@@ -20,19 +22,25 @@ import java.util.List;
 
 public class SongsFragment extends Fragment implements SongsView {
 
-    MusicActivity.PlayBackInteraction mPlayBackInteraction;
+    private PlayBackInteraction mPlayBackInteraction;
+
+    private static final int SPAN_COUNT = 2;
 
     private SongsPresenter mPresenter = new SongsPresenter();
 
     private RecyclerView mRecyclerView = null;
     private SongsAdapter mSongsAdapter = new SongsAdapter();
 
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof MusicActivity){
-            mPlayBackInteraction = ((MusicActivity) activity).getPlayBackService();
+        initPlayBackInteraction();
+    }
+
+    private void initPlayBackInteraction() {
+        if(getActivity() instanceof MusicActivity) {
+            mPlayBackInteraction = ((MusicActivity) getActivity())
+                    .getPlayBackInteraction();
         }
     }
 
@@ -47,25 +55,33 @@ public class SongsFragment extends Fragment implements SongsView {
         mPresenter.onAttachToView(this);
         mPresenter.loadAllSongs();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        final RecyclerView.LayoutManager manager = new GridLayoutManager(
+                getActivity(),
+                SPAN_COUNT);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setHasFixedSize(true);
     }
 
     @Override
     public void onAllSongsLoaded(List<Song> songList) {
         mSongsAdapter.setDataSource(songList);
         mSongsAdapter.setOnItemClickListener(view ->{
+            final SongsAdapter.SongViewHolder holder =
+                    (SongsAdapter.SongViewHolder)
+                            mRecyclerView.findContainingViewHolder(view);
+            if(holder == null) return;
+            final Song song = holder.getSong();
+            final long songId = song.id;
 
-            final SongsAdapter.SongViewHolder holder
-                    = (SongsAdapter.SongViewHolder) mRecyclerView.findContainingViewHolder(view);
-
+            if(mPlayBackInteraction == null) {
+                initPlayBackInteraction();
+            }
+            if(mPlayBackInteraction != null) {
+                mPlayBackInteraction.play(songId);
+            }
 
         });
         mRecyclerView.setAdapter(mSongsAdapter);
-    }
-
-    private void initPlayBackInteraction(){
-     if (getActivity() instanceof MusicActivity){
-         mPlayBackInteraction =
-     }
     }
 
     @Override

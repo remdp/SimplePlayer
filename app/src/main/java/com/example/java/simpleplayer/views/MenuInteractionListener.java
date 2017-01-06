@@ -6,6 +6,6 @@ package com.example.java.simpleplayer.views;
 
 public interface MenuInteractionListener {
 
-    public void onMainFragmentEventListener(int value);
+    void onMainFragmentEventListener(int value);
 
 }

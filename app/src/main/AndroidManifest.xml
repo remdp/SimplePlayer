@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.java.simpleplayer">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -12,22 +10,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.MusicActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
 
         <service
             android:name=".services.PlayBackService"
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".views.SplashActivity">
+        <activity
+            android:name=".views.SplashActivity"
             android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -40,10 +30,6 @@
             android:name=".views.MenuActivity"
             android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".views.base.BaseActivity" />
-        <activity android:name=".views.fragments.SongsFragment" />
-        <activity android:name=".views.fragments.AlbumFragment" />
-        <activity android:name=".views.fragments.ArtistFragment"></activity>
     </application>
 
 </manifest>

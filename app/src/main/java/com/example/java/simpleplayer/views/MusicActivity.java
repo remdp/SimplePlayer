@@ -27,40 +27,36 @@ import java.util.List;
 public class MusicActivity extends BaseActivity {
 
     public interface PlayBackInteraction{
-        void play();
+        boolean play();
         void pause();
         void play(long songId);
+        boolean isPaused();
     }
 
     private PlayBackService mService;
     private boolean mBound = false;
 
     @Nullable
-    public PlayBackInteraction getPlayBackService(){
+    public PlayBackInteraction getPlayBackInteraction() {
         return mService;
     }
 
-    private ServiceConnection mConnection  = new ServiceConnection() {
+    private ServiceConnection mConnection = new ServiceConnection() {
+
         @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            PlayBackService.PlayBackBinder binder =
-                    (PlayBackService.PlayBackBinder) service;
+        public void onServiceConnected(ComponentName className,
+                                       IBinder iBinder) {
+            PlayBackService.PlayBackBinder binder
+                    = (PlayBackService.PlayBackBinder) iBinder;
             mService = binder.getService();
             mBound = true;
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName componentName) {
+        public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
         }
     };
-
-    private SongsPresenter mPresenter = new SongsPresenter();
-
-    private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
-
-    private Button buttonStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +69,7 @@ public class MusicActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         Intent playBackIntent = PlayBackService.newInstance(this);
-        bindService(playBackIntent,mConnection, Context.BIND_AUTO_CREATE);
+        bindService(playBackIntent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

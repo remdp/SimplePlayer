@@ -17,11 +17,11 @@ public class SongsPresenter {
 
     private SongsView mView = null;
 
-    private Subscription subscription = null;
-
     public void onAttachToView(@NonNull SongsView songsView){
         mView = songsView;
     }
+
+    private Subscription subscription = null;
 
         public void loadAllSongs(){
             subscription = Observable.just(SongsRepository.getAllSongs(mView.getContext()))

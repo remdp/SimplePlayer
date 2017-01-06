@@ -19,8 +19,9 @@ import android.widget.Toast;
 import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.views.MusicActivity;
 
-public class PlayBackService extends Service implements MediaPlayer.OnPreparedListener,
-MusicActivity.PlayBackInteraction{
+public class PlayBackService extends Service implements
+        MediaPlayer.OnPreparedListener,
+        MusicActivity.PlayBackInteraction{
 
     public static final String ACTION_PLAY = BuildConfig.APPLICATION_ID + ".action.PLAY";
 
@@ -30,6 +31,8 @@ MusicActivity.PlayBackInteraction{
     private final IBinder mBinder = new PlayBackBinder();
 
     private MediaPlayer mMediaPlayer = null;
+
+    private boolean isPaused;
 
     public static Intent newInstance(Context context) {
         return new Intent(context, PlayBackService.class);
@@ -149,10 +152,23 @@ MusicActivity.PlayBackInteraction{
     }
 
     @Override
-    public void play() {
-
+    public boolean play() {
+        try {
+            if(mMediaPlayer != null && isPaused) {
+                mMediaPlayer.start();
+                isPaused = false;
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
+    @Override
+    public boolean isPaused() {
+        return isPaused;
+    }
     @Override
     public void pause() {
 
