@@ -56,6 +56,10 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongViewHold
         return mDataSource == null ? 0 : mDataSource.size();
     }
 
+    public List<Song> getDataSource() {
+        return mDataSource;
+    }
+
     public static class SongViewHolder extends RecyclerView.ViewHolder {
 
         private Song mSong;

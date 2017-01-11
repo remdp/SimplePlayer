@@ -1,11 +1,14 @@
 package com.example.java.simpleplayer.views;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,13 +20,21 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.java.simpleplayer.R;
-import com.example.java.simpleplayer.views.base.BaseActivity;
 import com.example.java.simpleplayer.views.fragments.MainFragment;
 import com.example.java.simpleplayer.views.fragments.PlaylistsFragment;
+import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
+import rx.Observable;
 
 public class MenuActivity extends MusicActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MenuInteractionListener {
+
+    private Observable<CharSequence> queryObservable;
+
+    @Nullable
+    public Observable<CharSequence> getQueryObservable() {
+        return queryObservable;
+    }
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MenuActivity.class);
@@ -72,6 +83,17 @@ public class MenuActivity extends MusicActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        searchView.setQueryHint("Search...");
+
+        Observable<CharSequence> obs = RxSearchView.queryTextChanges(searchView);
         return true;
     }
 
@@ -83,9 +105,9 @@ public class MenuActivity extends MusicActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        //if (id == R.id.action_settings) {
+         //   return true;
+       // }
 
         return super.onOptionsItemSelected(item);
     }
