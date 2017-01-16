@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongViewHold
     }
 
     public void setDataSource(List<Song> dataSource) {
+        Log.d("TAG", "ffffffffffffffffffff" + dataSource.size());
         mDataSource = dataSource;
         notifyDataSetChanged();
     }
