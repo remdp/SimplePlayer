@@ -48,17 +48,17 @@ public class PlayBackService extends Service implements
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand(" + intent.getAction()+")");
-        if(intent.getAction() == null) return Service.START_STICKY;
+       /* if(intent.getAction() == null) return Service.START_STICKY;
         if (intent.getAction().equals(ACTION_PLAY)) {
             try {
                 mMediaPlayer = new MediaPlayer();
                 mMediaPlayer.setDataSource(this, getSongs());
                 mMediaPlayer.setOnPreparedListener(this);
-                // mMediaPlayer.prepareAsync();
+               // mMediaPlayer.prepareAsync();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         return Service.START_STICKY;
     }
@@ -172,12 +172,11 @@ public class PlayBackService extends Service implements
     }
     @Override
     public void pause() {
-
         try {
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
+                isPaused = true;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

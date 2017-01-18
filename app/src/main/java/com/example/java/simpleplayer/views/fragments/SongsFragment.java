@@ -38,6 +38,7 @@ public class SongsFragment extends Fragment implements SongsView {
     private RecyclerView mRecyclerView = null;
     private SongsAdapter mSongsAdapter = new SongsAdapter();
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -57,10 +58,6 @@ public class SongsFragment extends Fragment implements SongsView {
         return inflater.inflate(R.layout.fragment_songs, container, false);
     }
 
-    public void filter(CharSequence query){
-     mSongsAdapter.getDataSource();
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mPresenter.onAttachToView(this);
@@ -76,14 +73,14 @@ public class SongsFragment extends Fragment implements SongsView {
             if(getActivity() instanceof MenuActivity) {
                 MenuActivity menuActivity = (MenuActivity) getActivity();
                 menuActivity.getQueryObservable()
-                        .doOnNext( query -> Log.d("TAG", query.toString()))
-                        .flatMap(query -> mSongsObservable.filter(song -> song.title.contains(query) ))
-                        .toList()
-                        .subscribe(songList -> {
-                            mSongsAdapter.setDataSource(songList);});
-
+                        .flatMap(query ->
+                                mSongsObservable
+                                        .filter(song -> song.title.contains(query))
+                                        .toList())
+                        .subscribe(songList -> mSongsAdapter.setDataSource(songList));
             }
         }, 2000);
+
     }
 
     @Override
@@ -106,6 +103,7 @@ public class SongsFragment extends Fragment implements SongsView {
 
         });
         mRecyclerView.setAdapter(mSongsAdapter);
+
 
         mSongsObservable = Observable.from(songList);
     }
