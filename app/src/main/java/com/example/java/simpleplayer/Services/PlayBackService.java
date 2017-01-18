@@ -157,6 +157,7 @@ public class PlayBackService extends Service implements
             if(mMediaPlayer != null && isPaused) {
                 mMediaPlayer.start();
                 isPaused = false;
+
                 return true;
             }
         } catch (Exception e) {
