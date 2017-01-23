@@ -140,7 +140,6 @@ public class SongsRepository {
         return result.size() < limit ? result : result.subList(0, limit);
     }
 
-
     public static Cursor makeSongCursor(Context context, String selection, String[] paramArrayOfString) {
         final String songSortOrder = PreferencesUtility.getInstance(context).getSongSortOrder();
         return makeSongCursor(context, selection, paramArrayOfString, songSortOrder);

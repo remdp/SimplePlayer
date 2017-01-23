@@ -105,5 +105,20 @@ public class Song extends RealmObject {
             this.duration = _duration;
             this.trackNumber = _trackNumber;
         }
+
+    @Override
+    public int hashCode() {
+        return (int) this.getId();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == null || !(obj instanceof Song)){
+            return false;
+        }
+        return this.getId() == ((Song)obj).getId();
+    }
+
+}
 
