@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.views.fragments.MainFragment;
-import com.example.java.simpleplayer.views.fragments.PlaylistsFragment;
+import com.example.java.simpleplayer.views.fragments.PlayListsFragment;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import rx.Observable;
 
@@ -114,7 +114,7 @@ public class MenuActivity extends MusicActivity
         if (id == R.id.nav_camera) {
             replaceFragment(MainFragment.newInstance(5));
         } else if (id == R.id.nav_gallery) {
-            replaceFragment(PlaylistsFragment.newInstance());
+            replaceFragment(PlayListsFragment.newInstance());
         } else if (id == R.id.nav_slideshow) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_menu);
         } else if (id == R.id.nav_manage) {

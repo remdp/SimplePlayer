@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import com.example.java.simpleplayer.presenters.SongsPresenter;
 import com.example.java.simpleplayer.views.MenuActivity;
 import com.example.java.simpleplayer.views.MusicActivity;
 import com.example.java.simpleplayer.views.MusicActivity.PlayBackInteraction;
-import com.example.java.simpleplayer.views.SongsAdapter;
+import com.example.java.simpleplayer.views.adapters.SongsAdapter;
 import com.example.java.simpleplayer.views.SongsView;
 
 import java.util.List;
@@ -75,12 +74,12 @@ public class SongsFragment extends Fragment implements SongsView {
                 menuActivity.getQueryObservable()
                         .flatMap(query ->
                                 mSongsObservable
-                                        .filter(song -> song.title.contains(query))
+                                        .filter(song -> song.getTitle().contains(query))
                                         .toList())
                         .subscribe(songList -> mSongsAdapter.setDataSource(songList));
+
             }
         }, 2000);
-
     }
 
     @Override
@@ -92,7 +91,7 @@ public class SongsFragment extends Fragment implements SongsView {
                             mRecyclerView.findContainingViewHolder(view);
             if(holder == null) return;
             final Song song = holder.getSong();
-            final long songId = song.id;
+            final long songId = song.getId();
 
             if(mPlayBackInteraction == null) {
                 initPlayBackInteraction();

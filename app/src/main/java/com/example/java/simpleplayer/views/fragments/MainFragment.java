@@ -72,14 +72,34 @@ public class MainFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
         mPlayPauseButton = (ImageView) view.findViewById(R.id.btnPlay);
         mSeekBar = (SeekBar) view.findViewById(R.id.sb);
-
-
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
+                if(fromUser) {
+                    if(mPlayBackInteraction != null) {
+                        mPlayBackInteraction.onUserSeek(position);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         viewPager = (ViewPager) view.findViewById(R.id.pager);
         if (viewPager != null) {
@@ -94,19 +114,21 @@ public class MainFragment extends Fragment {
             if(mPlayBackInteraction != null) {
                 if(mPlayBackInteraction.isPaused()) {
                     mPlayBackInteraction.play();
+                    mPlayBackInteraction
+                            .gerDurationObservable()
+                            .subscribe(position -> { mSeekBar.setProgress(position); });
                 } else {
                     mPlayBackInteraction.pause();
                 }
             }
         });
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new SongsFragment(), "Songs");
-        adapter.addFragment(new AlbumFragment(), "Albums");
-        adapter.addFragment(new ArtistFragment(), "Artists");
+        adapter.addFragment(new SongsFragment(), this.getString(R.string.songRealmList));
+        adapter.addFragment(new AlbumFragment(), this.getString(R.string.albums));
+        adapter.addFragment(new ArtistFragment(), this.getString(R.string.artists));
         viewPager.setAdapter(adapter);
     }
 
@@ -144,5 +166,4 @@ public class MainFragment extends Fragment {
             return mFragmentTitles.get(position);
         }
     }
-
 }

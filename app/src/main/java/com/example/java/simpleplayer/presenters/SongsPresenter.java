@@ -3,6 +3,7 @@ package com.example.java.simpleplayer.presenters;
 import android.support.annotation.NonNull;
 
 import com.example.java.simpleplayer.models.Song;
+import com.example.java.simpleplayer.repositories.SongsRepository;
 import com.example.java.simpleplayer.views.SongsView;
 
 import java.util.ArrayList;

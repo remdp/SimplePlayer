@@ -24,16 +24,30 @@ import com.example.java.simpleplayer.views.base.BaseActivity;
 
 import java.util.List;
 
+import rx.Observable;
+
 public class MusicActivity extends BaseActivity {
 
-    public interface PlayBackInteraction{
+    public interface PlayBackInteraction {
+
         boolean play();
+
         void pause();
+
         void play(long songId);
+
         boolean isPaused();
+
+        Observable<Integer> gerDurationObservable();
+
+        void onUserSeek(int progress);
+
+
+
     }
 
     private PlayBackService mService;
+
     private boolean mBound = false;
 
     @Nullable
@@ -63,7 +77,7 @@ public class MusicActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Intent playBackIntent = PlayBackService.newInstance(this);
         startService(playBackIntent);
-    };
+    }
 
     @Override
     protected void onStart() {
@@ -75,7 +89,7 @@ public class MusicActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (mBound){
+        if (mBound) {
             unbindService(mConnection);
             mBound = false;
         }

@@ -11,17 +11,26 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.compat.BuildConfig;
+import android.support.annotation.IntegerRes;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.java.simpleplayer.R;
+import com.example.java.simpleplayer.BuildConfig;
 import com.example.java.simpleplayer.views.MusicActivity;
+import com.example.java.simpleplayer.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
 public class PlayBackService extends Service implements
         MediaPlayer.OnPreparedListener,
-        MusicActivity.PlayBackInteraction{
+        MusicActivity.PlayBackInteraction {
 
     public static final String ACTION_PLAY = BuildConfig.APPLICATION_ID + ".action.PLAY";
 
@@ -33,6 +42,8 @@ public class PlayBackService extends Service implements
     private MediaPlayer mMediaPlayer = null;
 
     private boolean isPaused;
+
+    private PublishSubject<Integer> mDurationSubject = PublishSubject.create();
 
     public static Intent newInstance(Context context) {
         return new Intent(context, PlayBackService.class);
@@ -52,7 +63,7 @@ public class PlayBackService extends Service implements
         if (intent.getAction().equals(ACTION_PLAY)) {
             try {
                 mMediaPlayer = new MediaPlayer();
-                mMediaPlayer.setDataSource(this, getSongs());
+                mMediaPlayer.setDataSource(this, getSongRealmList());
                 mMediaPlayer.setOnPreparedListener(this);
                // mMediaPlayer.prepareAsync();
             } catch (Exception e) {
@@ -158,6 +169,8 @@ public class PlayBackService extends Service implements
                 mMediaPlayer.start();
                 isPaused = false;
 
+                timer.scheduleAtFixedRate(new DurationTimerTask(), 0, 1000);
+
                 return true;
             }
         } catch (Exception e) {
@@ -170,16 +183,47 @@ public class PlayBackService extends Service implements
     public boolean isPaused() {
         return isPaused;
     }
+
+    @Override
+    public Observable<Integer> gerDurationObservable() {
+        return mDurationSubject;
+    }
+
+    @Override
+    public void onUserSeek(int progress) {
+        try {
+            if(mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                int seekPosition = (mMediaPlayer.getDuration() / 100) * progress;
+                mMediaPlayer.seekTo(seekPosition);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void pause() {
         try {
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 isPaused = true;
+                timer.cancel();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private final Timer timer = new Timer();
+
+    private class DurationTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            int current = (mMediaPlayer.getCurrentPosition() * 100) / mMediaPlayer.getDuration();
+            mDurationSubject.onNext(current);
+        }
+
     }
 
     @Override
@@ -192,6 +236,5 @@ public class PlayBackService extends Service implements
             return PlayBackService.this;
         }
     }
-
 
 }
