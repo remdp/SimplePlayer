@@ -11,7 +11,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.IntegerRes;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,8 +23,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 public class PlayBackService extends Service implements

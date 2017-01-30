@@ -1,28 +1,15 @@
 package com.example.java.simpleplayer.views;
 
-import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 
-import com.example.java.simpleplayer.R;
-import com.example.java.simpleplayer.models.Song;
-import com.example.java.simpleplayer.presenters.SongsPresenter;
 import com.example.java.simpleplayer.services.PlayBackService;
 import com.example.java.simpleplayer.views.base.BaseActivity;
-
-import java.util.List;
 
 import rx.Observable;
 
