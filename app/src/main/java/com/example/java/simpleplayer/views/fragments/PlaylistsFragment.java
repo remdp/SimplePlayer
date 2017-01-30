@@ -14,6 +14,7 @@ import com.example.java.simpleplayer.R;
 import com.example.java.simpleplayer.models.Song;
 import com.example.java.simpleplayer.presenters.PlayListPresenter;
 import com.example.java.simpleplayer.views.PlayListView;
+import com.example.java.simpleplayer.views.adapters.PlayListAdapter;
 
 import java.util.List;
 
@@ -51,7 +52,9 @@ public class PlayListsFragment extends Fragment implements PlayListView {
 
     @Override
     public void onPlayListLoaded(List<Song> songs) {
-
+        PlayListAdapter adapter = new PlayListAdapter();
+        adapter.setDataSource(songs);
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override

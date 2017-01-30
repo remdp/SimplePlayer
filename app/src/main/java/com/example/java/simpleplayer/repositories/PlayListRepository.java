@@ -18,33 +18,38 @@ public class PlayListRepository {
 
     public Single<PlayListModel> loadPlayList() {
         return Single.create(singleSubscriber -> {
-            mRealm.executeTransaction(realm -> {
-                final PlayListModel result = realm
+            mRealm.executeTransactionAsync(realm -> {
+                PlayListModel result = realm
                         .where(PlayListModel.class)
                         .findFirst();
+                if(singleSubscriber.isUnsubscribed()) return;
+                if(result == null) {
+                    result = new PlayListModel();
+                }
                 singleSubscriber.onSuccess(result);
             });
         });
     }
 
     public void addSong(Song song) {
-        mRealm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                PlayListModel playListModel = realm.where(PlayListModel.class).findFirst();
-                playListModel.getSongRealmList().add(song);
+        mRealm.executeTransactionAsync(realm -> {
+            PlayListModel playListModel = realm.where(PlayListModel.class).findFirst();
+            if(playListModel == null) {
+                playListModel = new PlayListModel();
             }
+            playListModel.getSongRealmList().add(song);
+            realm.copyToRealmOrUpdate(playListModel);
         });
     }
 
-    private Completable clear() {
+    public Completable clear() {
         return Completable.fromAction(() ->
                 mRealm.executeTransactionAsync(realm ->
                         realm.delete(PlayListModel.class)
                 ));
     }
 
-    private Single<Song> getNextSongAfter(long id) {
+    public Single<Song> getNextSongAfter(long id) {
         return Single.create(singleSubscriber -> {
             mRealm.executeTransaction(realm -> {
                 PlayListModel playList = realm
@@ -69,5 +74,4 @@ public class PlayListRepository {
             });
         });
     }
-
 }

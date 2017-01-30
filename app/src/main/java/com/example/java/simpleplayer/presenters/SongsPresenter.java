@@ -3,6 +3,7 @@ package com.example.java.simpleplayer.presenters;
 import android.support.annotation.NonNull;
 
 import com.example.java.simpleplayer.models.Song;
+import com.example.java.simpleplayer.repositories.PlayListRepository;
 import com.example.java.simpleplayer.repositories.SongsRepository;
 import com.example.java.simpleplayer.views.SongsView;
 
@@ -18,31 +19,28 @@ public class SongsPresenter {
 
     private SongsView mView = null;
 
-    public void onAttachToView(@NonNull SongsView songsView){
+    private PlayListRepository mPlayListRepository = new PlayListRepository();
+
+    public void onAttachToView(@NonNull SongsView songsView) {
         mView = songsView;
     }
 
     private Subscription subscription = null;
 
-        public void loadAllSongs(){
-            subscription = Observable.just(SongsRepository.getAllSongs(mView.getContext()))
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<ArrayList<Song>>() {
-                                   @Override
-                                   public void call(ArrayList<Song> songs) {
-                                       mView.onAllSongsLoaded(songs);
-                                   }
-                               },
-                            new Action1<Throwable>() {
-                                @Override
-                                public void call(Throwable throwable) {
-                                    throwable.printStackTrace();
-                                }
-                            });
-        }
+    public void loadAllSongs() {
+        subscription = Observable.just(SongsRepository.getAllSongs(mView.getContext()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(songs -> { mView.onAllSongsLoaded(songs);},
+                        Throwable::printStackTrace);
 
-    public void onDetach(){
+    }
+
+    public void addToPlayList(Song song) {
+        mPlayListRepository.addSong(song);
+    }
+
+    public void onDetach() {
         if(subscription != null)
             subscription.unsubscribe();
     }

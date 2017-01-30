@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.java.simpleplayer.BuildConfig;
+import com.example.java.simpleplayer.repositories.PlayListRepository;
 import com.example.java.simpleplayer.views.MusicActivity;
 import com.example.java.simpleplayer.R;
 
@@ -55,45 +56,7 @@ public class PlayBackService extends Service implements
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand(" + intent.getAction()+")");
-       /* if(intent.getAction() == null) return Service.START_STICKY;
-        if (intent.getAction().equals(ACTION_PLAY)) {
-            try {
-                mMediaPlayer = new MediaPlayer();
-                mMediaPlayer.setDataSource(this, getSongRealmList());
-                mMediaPlayer.setOnPreparedListener(this);
-               // mMediaPlayer.prepareAsync();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-
         return Service.START_STICKY;
-    }
-
-    private Uri getSongs() {
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        if (cursor == null) {
-            // query failed, handle error.
-        } else if (!cursor.moveToFirst()) {
-            // no media on the device
-        } else {
-            int titleColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE);
-            int idColumn = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
-            do {
-                long thisId = cursor.getLong(idColumn);
-                String thisTitle = cursor.getString(titleColumn);
-                Uri contentUri = ContentUris.withAppendedId(
-                        android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        thisId);
-
-                return contentUri;
-                // ...process entry...
-            } while (cursor.moveToNext());
-        }
-        return null;
     }
 
     @Override
@@ -103,13 +66,6 @@ public class PlayBackService extends Service implements
         Toast.makeText(this, "onDestroy()", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onDestroy()");
     }
-
-    /*@Override
-    public boolean onUnbind(Intent intent) {
-        Toast.makeText(this, "onUnbind()", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "onUnbind()");
-        return super.onUnbind(intent);
-    }*/
 
     public PlayBackService() {
     }
@@ -154,6 +110,16 @@ public class PlayBackService extends Service implements
             mMediaPlayer.setDataSource(this, contentUri);
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnCompletionListener(mediaPlayer ->
+                    new PlayListRepository()
+                            .getNextSongAfter(songId)
+                            .subscribe(song -> playSongId(song.getId()), throwable -> {
+                                Toast.makeText(
+                                        PlayBackService.this,
+                                        throwable.getMessage(),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                            }));
         } catch (Exception e) {
             e.printStackTrace();
         }
